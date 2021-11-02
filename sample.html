@@ -30,7 +30,12 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ace.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ext-language_tools.js"></script>
+    <script src="https://unpkg.com/micromodal/dist/micromodal.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/micromodal/dist/micromodal.min.js"></script>
+    <script src="script.js"></script>
     <script>
+
+
         function sleep(a) {
             var dt1 = new Date().getTime();
             var dt2 = new Date().getTime();
@@ -132,7 +137,7 @@
 
             }
 
-
+           
             main();
 
         }
@@ -145,12 +150,58 @@
 
     </script>
     <script>
-        var connection = new WebSocket('ws://127.0.0.1:10005');
+        var ws = new WebSocket('ws://localhost:10005');
+
+        // 接続
+        ws.onopen = function () {
+            console.log("onopen");
+        };
+
+        ws.onmessage = function (e) {
+            // e.data contains received string.
+            console.log("onmessage: " + e.data);
+        };
+
+        ws.onclose = function () {
+            console.log("onclose");
+        };
+
+        ws.onerror = function (e) {
+            console.log("onerror");
+            console.log(e)
+        };
+
+        function SendCode(editedCode) {
+            ws.send(editedCode);
+        }
+        setTimeout(SendCode, 1000);
+
+
+
+
+
+
     </script>
 
+    <section class="wrapper">
+        <section class="wrapper">
+            <button class="modal__btn" data-micromodal-trigger="modal-1" role="button">Trigger</button>
+        </section>
+        <div id="modal-1" aria-hidden="true">
+            <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+
+                <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-1-title">
+                    <p>He said that that that that that boy used in the sentence was
+                        wrong.<br>あの少年がその文で使ったあのthatは間違っていたと彼は言った。</p>
+                    <button class="modal__close" aria-label="Close modal" data-micromodal-close>モーダルを閉じる</button>
+                </div>
+            </div>
+        </div>
+    </section>
 
 
 </body>
+
 <div>
     InputField
     <input type="text" id="inputField" name="name"></input>
