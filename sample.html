@@ -26,191 +26,185 @@
     </div>
 
     <div id="editor" style="height: 600px"></div>
-    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ace.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ext-language_tools.js"></script>
-    <script src="https://unpkg.com/micromodal/dist/micromodal.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/micromodal/dist/micromodal.min.js"></script>
-    <script src="script.js"></script>
-    <script>
 
 
-        function sleep(a) {
-            var dt1 = new Date().getTime();
-            var dt2 = new Date().getTime();
-            while (dt2 < dt1 + a) {
-                dt2 = new Date().getTime();
-            }
-            return;
-        }
-        var sessionId;
-        var editor = ace.edit("editor");
-        var editedCode = editor.getValue();
+    <div>
+        InputField
+        <input type="text" id="inputField" name="name"></input>
 
+    </div>
 
-        editor.$blockScrolling = Infinity;
-        editor.setOptions({
-            enableBasicAutocompletion: true,
-            enableSnippets: true,
-            enableLiveAutocompletion: true
-        });
-        editor.setTheme("ace/theme/monokai");
-        editor.getSession().setMode("ace/mode/html");
+    <div>
+        OutputField
+        <textarea id="t_message" name="message" readonly></textarea>
+    </div>
 
-        $('#font-size').click(function (e) {
-            editor.setFontSize($(e.target).data('size'));
-        });
-        $('#bold').click(function (e) {
-            editor.insert('<strong>' + editor.getCopyText() + '</strong>');
-        });
-        $('#save').click(function (e) {
-            localStorage.text = editor.getValue();
-            alert("保存しました。");
-        });
-        $('#load').click(function (e) {
-            if (!confirm("読み込みますか？")) return;
-            editor.setValue(localStorage.text, -1);
-        });
-
-        $('#compile').click(function () {
-            let inputField = document.getElementById('inputField');
-            var inputText = inputField.value;
-
-            async function postData(url = "", data = {}) {
-                const response = await fetch(url, {
-                    method: "POST",
-                    mode: "cors",
-                    cache: "no-cache",
-                    credentials: "same-origin",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    redirect: "follow",
-                    referrerPolicy: "no-referrer",
-                    body: JSON.stringify(data),
-                });
-                return response.json();
-            }
-
-            async function getData(url2) {
-                const response = await fetch(url2);
-                return response.json();
-            }
-            async function getDetail(url3) {
-                const response = await fetch(url3);
-                return response.json();
-            }
-
-
-
-
-            async function main() {
-                editedCode = editor.getValue();
-                const url = "http://api.paiza.io:80/runners/create";
-                const data = {
-                    source_code: editedCode,
-                    language: "python3",
-                    input: inputText,
-                    api_key: "guest",
-                };
-                const res = await postData(url, data);
-
-                sessionId = res.id;
-                const url2 = `http://api.paiza.io/runners/get_status?id=${sessionId}&api_key=guest`;
-                let res2 = await getData(url2);
-
-
-
-                console.log(res);
-                console.log(res2);
-
-                sleep(2000);
-                res2 = await getData(url2);
-                const url3 = `http://api.paiza.io/runners/get_details?id=${sessionId}&api_key=guest`;
-                const res3 = await getDetail(url3);
-
-                console.log(res3);
-                console.log(editedCode);
-                let element = document.getElementById('t_message');
-                element.value = res3.stdout;
-
-            }
-
-           
-            main();
-
-        }
-
-
-
-
-        );
-
-
-    </script>
-    <script>
-        var ws = new WebSocket('ws://localhost:10005');
-
-        // 接続
-        ws.onopen = function () {
-            console.log("onopen");
-        };
-
-        ws.onmessage = function (e) {
-            // e.data contains received string.
-            console.log("onmessage: " + e.data);
-        };
-
-        ws.onclose = function () {
-            console.log("onclose");
-        };
-
-        ws.onerror = function (e) {
-            console.log("onerror");
-            console.log(e)
-        };
-
-        function SendCode(editedCode) {
-            ws.send(editedCode);
-        }
-        setTimeout(SendCode, 1000);
-
-
-
-
-
-
-    </script>
-
-    <section class="wrapper">
-        <section class="wrapper">
-            <button class="modal__btn" data-micromodal-trigger="modal-1" role="button">Trigger</button>
-        </section>
-        <div id="modal-1" aria-hidden="true">
-            <div class="modal__overlay" tabindex="-1" data-micromodal-close>
-
-                <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-1-title">
-                    <p>He said that that that that that boy used in the sentence was
-                        wrong.<br>あの少年がその文で使ったあのthatは間違っていたと彼は言った。</p>
-                    <button class="modal__close" aria-label="Close modal" data-micromodal-close>モーダルを閉じる</button>
-                </div>
-            </div>
-        </div>
-    </section>
+    <div id='#loginInput'>
+        Room<input type="text" v-bind:value="roomName">
+        <button v-on:click="login">log in</button>
+    </div>
 
 
 </body>
 
 <div>
-    InputField
-    <input type="text" id="inputField" name="name"></input>
-
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.5/lodash.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.17.1/dist/axios.min.js"></script>
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ace.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ext-language_tools.js"></script>
+    <script src="./script.js"></script>
 </div>
 
-<div>
-    OutputField
-    <textarea id="t_message" name="message" readonly></textarea>
-</div>
+<script>
+
+
+    function sleep(a) {
+        var dt1 = new Date().getTime();
+        var dt2 = new Date().getTime();
+        while (dt2 < dt1 + a) {
+            dt2 = new Date().getTime();
+        }
+        return;
+    }
+    var sessionId;
+    var editor = ace.edit("editor");
+    var editedCode = editor.getValue();
+
+
+    editor.$blockScrolling = Infinity;
+    editor.setOptions({
+        enableBasicAutocompletion: true,
+        enableSnippets: true,
+        enableLiveAutocompletion: true
+    });
+    editor.setTheme("ace/theme/monokai");
+    editor.getSession().setMode("ace/mode/html");
+
+    $('#font-size').click(function (e) {
+        editor.setFontSize($(e.target).data('size'));
+    });
+    $('#bold').click(function (e) {
+        editor.insert('<strong>' + editor.getCopyText() + '</strong>');
+    });
+    $('#save').click(function (e) {
+        localStorage.text = editor.getValue();
+        alert("保存しました。");
+    });
+    $('#load').click(function (e) {
+        if (!confirm("読み込みますか？")) return;
+        editor.setValue(localStorage.text, -1);
+    });
+
+    $('#compile').click(function () {
+        let inputField = document.getElementById('inputField');
+        var inputText = inputField.value;
+
+        async function postData(url = "", data = {}) {
+            const response = await fetch(url, {
+                method: "POST",
+                mode: "cors",
+                cache: "no-cache",
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                redirect: "follow",
+                referrerPolicy: "no-referrer",
+                body: JSON.stringify(data),
+            });
+            return response.json();
+        }
+
+        async function getData(url2) {
+            const response = await fetch(url2);
+            return response.json();
+        }
+        async function getDetail(url3) {
+            const response = await fetch(url3);
+            return response.json();
+        }
+
+
+
+
+        async function main() {
+            editedCode = editor.getValue();
+            const url = "http://api.paiza.io:80/runners/create";
+            const data = {
+                source_code: editedCode,
+                language: "python3",
+                input: inputText,
+                api_key: "guest",
+            };
+            const res = await postData(url, data);
+
+            sessionId = res.id;
+            const url2 = `http://api.paiza.io/runners/get_status?id=${sessionId}&api_key=guest`;
+            let res2 = await getData(url2);
+
+
+
+            console.log(res);
+            console.log(res2);
+
+            sleep(2000);
+            res2 = await getData(url2);
+            const url3 = `http://api.paiza.io/runners/get_details?id=${sessionId}&api_key=guest`;
+            const res3 = await getDetail(url3);
+
+            console.log(res3);
+            console.log(editedCode);
+            let element = document.getElementById('t_message');
+            element.value = res3.stdout;
+
+        }
+
+
+        main();
+
+    }
+
+    );
+
+
+</script>
+
+
+<script>
+    var ws = new WebSocket('ws://localhost:10005');
+
+    // 接続
+    ws.onopen = function () {
+        console.log("onopen");
+    };
+
+    ws.onmessage = function (e) {
+        // e.data contains received string.
+        console.log("onmessage: " + e.data);
+    };
+
+    ws.onclose = function () {
+        console.log("onclose");
+    };
+
+    ws.onerror = function (e) {
+        console.log("onerror");
+        console.log(e)
+    };
+
+    function SendCode(editedCode) {
+        ws.send(editedCode);
+    }
+    //setTimeout(SendCode, 1000);
+
+    
+
+
+
+
+</script>
 
 </html>
