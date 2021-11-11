@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Ace Editor sample2</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+
+<body>
+    <div id="app">
+        <div style="height: 200px">
+            <editor editor-id="editorA" :content="contentA" v-on:change-content="changeContentA"></editor>
+        </div>
+    </div>
+    <div id='loginInput'>
+        Room<input v-model="roomName">
+        <button v-on:click="login">log in</button>
+    </div>
+</body>
+<div>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.5/lodash.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.17.1/dist/axios.min.js"></script>
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ace.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ext-language_tools.js"></script>
+    <script src="./script.js"></script>
+</div>
+
+<script>
+    var ws = new WebSocket('ws://localhost:10005');
+
+    // 接続
+    ws.onopen = function () {
+        console.log("onopen");
+    };
+
+    ws.onmessage = function (e) {
+        // e.data contains received string.
+        console.log("onmessage: " + e.data);
+    };
+
+    ws.onclose = function () {
+        console.log("onclose");
+    };
+
+    ws.onerror = function (e) {
+        console.log("onerror");
+        console.log(e)
+    };
+
+    function SendCode(editedCode) {
+        ws.send(editedCode);
+    }
+    //setTimeout(SendCode, 1000);
+
+
+
+
+
+
+</script>
+
+</html>

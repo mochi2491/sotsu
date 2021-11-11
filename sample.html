@@ -39,12 +39,15 @@
         <textarea id="t_message" name="message" readonly></textarea>
     </div>
 
-    <div id='#loginInput'>
-        Room<input type="text" v-bind:value="roomName">
+    <div id='loginInput'>
+        Room<input v-model="roomName">
         <button v-on:click="login">log in</button>
     </div>
+    <div id="editorWatcher">
+        <button v-on:click="shoot(editor.editedCode)">shoot</button>
+    </div>
 
-
+    
 </body>
 
 <div>
@@ -97,7 +100,6 @@
         if (!confirm("読み込みますか？")) return;
         editor.setValue(localStorage.text, -1);
     });
-
     $('#compile').click(function () {
         let inputField = document.getElementById('inputField');
         var inputText = inputField.value;
@@ -172,7 +174,6 @@
 
 </script>
 
-
 <script>
     var ws = new WebSocket('ws://localhost:10005');
 
@@ -200,7 +201,7 @@
     }
     //setTimeout(SendCode, 1000);
 
-    
+
 
 
 
