@@ -64,6 +64,11 @@ Vue.component('Editor', {
             this.beforeContent = this.editor.getValue()
             this.$emit('change-content', this.editor.getValue())
         })
+    },
+    methods:{
+        font(){
+            this.editor.setFontSize($(e.target).data('size'));
+        }
     }
 })
 

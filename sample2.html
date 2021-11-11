@@ -10,6 +10,23 @@
 
 <body>
     <div id="app">
+        <div class="btn-group">
+            <div class="btn-group">
+                <button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><i
+                        class="glyphicon glyphicon-search"></i> <span class="caret"></span></button>
+                <ul class="dropdown-menu" id="font-size">
+                    <li><a href="#" data-size="10">小さい</a></li>
+                    <li><a href="#" data-size="12">普通</a></li>
+                    <li><a href="#" data-size="14">大きい</a></li>
+                </ul>
+            </div>
+            <button id="bold" class="btn btn-default"><i class="glyphicon glyphicon-bold"></i></button>
+            <button id="save" class="btn btn-default"><i class="glyphicon glyphicon-floppy-save"></i></button>
+            <button id="load" class="btn btn-default"><i class="glyphicon glyphicon-folder-open"></i></button>
+            <button id="compile" class="btn btn-default"><i class="glyphicon glyphicon-play-circle"></i></button>
+            <button id="hoge" class="btn btn-default"><i class="glyphicon glyphicon-asterisk"></i></button>
+        </div>
+
         <div style="height: 200px">
             <editor editor-id="editorA" :content="contentA" v-on:change-content="changeContentA"></editor>
         </div>
@@ -17,6 +34,15 @@
     <div id='loginInput'>
         Room<input v-model="roomName">
         <button v-on:click="login">log in</button>
+    </div>
+    <div>
+        InputField
+        <input type="text" id="inputField" name="name"></input>
+
+    </div>
+    <div>
+        OutputField
+        <textarea id="t_message" name="message" readonly></textarea>
     </div>
 </body>
 <div>
