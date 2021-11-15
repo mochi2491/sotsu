@@ -1,31 +1,3 @@
-var app1 = new Vue({
-    el: '#loginInput',
-    data: {
-        roomName: 'aaaa'
-    },
-    methods: {
-        login: function () {
-            ws.send(this.roomName)
-
-        }
-    }
-})//login
-
-var app2 = new Vue({
-    el: '#editorWatcher',
-    data: {
-
-    },
-    watch: {
-
-    },
-    methods: {
-        shoot: function (aa) {
-            alert(aa)
-        }
-    }
-})
-
 Vue.component('Editor', {
     template: '<div :id="editorId" style="width: 100%; height: 100%;"></div>',
     props: ['editorId', 'content', 'lang', 'theme'],
@@ -64,9 +36,10 @@ Vue.component('Editor', {
             this.beforeContent = this.editor.getValue()
             this.$emit('change-content', this.editor.getValue())
         })
+        
     },
-    methods:{
-        font(){
+    methods: {
+        font() {
             this.editor.setFontSize($(e.target).data('size'));
         }
     }
@@ -74,13 +47,32 @@ Vue.component('Editor', {
 
 const app = new Vue({
     el: "#app",
+    vuetify: new Vuetify(),
     data() {
         return {
             contentA: 'default content for Editor A',
-            contentB: 'default content for Editor B'
+            contentB: 'default content for Editor B',
+            roomName: 'aaaa'
+        }
+    },
+    computed: {
+        clock: function () {
+            return new Date()
+        },
+        now: function () {
+            return this.clock.getHours() + ":"
+                + this.clock.getMinutes() + ":" +
+                this.clock.getSeconds()
+        },
+        fusionString: function () {
+            return this.contentA + ":" + this.now
         }
     },
     methods: {
+        login: function () {
+            ws.send(this.roomName)
+
+        },
         reset() {
             this.contentA = 'reset content for Editor A'
             this.contentB = 'reset content for Editor B'
@@ -88,13 +80,17 @@ const app = new Vue({
         changeContentA(val) {
             if (this.contentA !== val) {
                 this.contentA = val
-                ws.send(this.contentA)
+                ws.send(this.fusionString)
             }
         },
         changeContentB(val) {
             if (this.contentB !== val) {
                 this.contentB = val
             }
+        },
+        waitConfirm() {
+            ws.send("waitConfirm")
         }
     }
 })
+
