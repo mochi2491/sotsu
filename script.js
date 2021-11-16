@@ -4,7 +4,8 @@ Vue.component('Editor', {
     data() {
         return {
             editor: Object,
-            beforeContent: ''
+            beforeContent: '',
+            inputData: ''
         }
     },
     watch: {
@@ -36,12 +37,10 @@ Vue.component('Editor', {
             this.beforeContent = this.editor.getValue()
             this.$emit('change-content', this.editor.getValue())
         })
-        
+
     },
     methods: {
-        font() {
-            this.editor.setFontSize($(e.target).data('size'));
-        }
+        
     }
 })
 
@@ -52,7 +51,7 @@ const app = new Vue({
         return {
             contentA: 'default content for Editor A',
             contentB: 'default content for Editor B',
-            roomName: 'aaaa'
+            roomName: ''
         }
     },
     computed: {
@@ -71,9 +70,9 @@ const app = new Vue({
     methods: {
         login: function () {
             ws.send(this.roomName)
-
+            ws.send("START")
         },
-        reset() {
+        reset:function() {
             this.contentA = 'reset content for Editor A'
             this.contentB = 'reset content for Editor B'
         },

@@ -65,8 +65,12 @@ body {
   justify-content: center;
 }
 
-
 .switch {
   padding-top: 0px;
   margin-top: 5px;
+}
+
+.loginForm {
+  display: inline-block;
+  margin: auto;
 }
