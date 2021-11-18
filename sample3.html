@@ -15,25 +15,26 @@
     <div id='app'>
         <v-app>
             <v-main>
-                <btn-group>
-                    <v-row>
-                        <v-col cols="12" sm="6" class="py-2">
+                <v-row>
+                    <v-col cols="12" sm="6" class="py-2">
 
-                            <v-btn v-on:click="loadFile" outlined>
-                                <v-icon>mdi-folder-open-outline</v-icon>
-                            </v-btn>
-                            <v-btn v-on:click="saveFile" outlined>
+                        <v-btn v-on:click="loadFile" outlined>
+                            <v-icon>mdi-folder-open-outline</v-icon>
+                        </v-btn>
+                        <v-btn v-on:click="saveFile" outlined>
 
-                                <v-icon>mdi-content-save-edit</v-icon>
-                            </v-btn>
-                            <v-btn v-on:click="compile" outlined>
-                                <v-icon>mdi-play-circle-outline</v-icon>
-                            </v-btn>
-                        </v-col>
-                    </v-row>
-                </btn-group>
+                            <v-icon>mdi-content-save-edit</v-icon>
+                        </v-btn>
+                        <v-btn v-on:click="compile" outlined>
+                            <v-icon>mdi-play-circle-outline</v-icon>
+                        </v-btn>
+                    </v-col>
+                </v-row>
+
                 <div style="height: 200px">
-                    <editor editor-id="editorA" :content="contentA" v-on:change-content="changeContentA"></editor>
+                    <editor editor-id="editorA" :content="contentA" v-on:change-content="changeContentA" 
+                      @parentMethod="handEditor">
+                    </editor>
                 </div>
                 <div class="loginForm">
                     <v-row>

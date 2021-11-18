@@ -12,8 +12,10 @@ Vue.component('Editor', {
         'content'(value) {
             if (this.beforeContent !== value) {
                 this.editor.setValue(value, 1)
+                this.$emit('parentMethod',this.editor)
             }
-        }
+        },
+
     },
     mounted() {
         const lang = this.lang || 'text'
@@ -37,10 +39,13 @@ Vue.component('Editor', {
             this.beforeContent = this.editor.getValue()
             this.$emit('change-content', this.editor.getValue())
         })
-
+        this.$emit('parentMethod',this.editor)
     },
     methods: {
-        
+        saveFile:function(){
+            localStorage.text = this.editor.getValue();
+            alert("保存しました。");
+        }
     }
 })
 
@@ -51,7 +56,8 @@ const app = new Vue({
         return {
             contentA: 'default content for Editor A',
             contentB: 'default content for Editor B',
-            roomName: ''
+            roomName: '',
+            editor:Object
         }
     },
     computed: {
@@ -72,7 +78,7 @@ const app = new Vue({
             ws.send(this.roomName)
             ws.send("START")
         },
-        reset:function() {
+        reset: function () {
             this.contentA = 'reset content for Editor A'
             this.contentB = 'reset content for Editor B'
         },
@@ -89,6 +95,19 @@ const app = new Vue({
         },
         waitConfirm() {
             ws.send("waitConfirm")
+        },
+        loadFile: function () {
+            
+        },
+        saveFile: function () {
+            
+        },
+        compile: function () {
+
+        },
+        handEditor:function(hoge){
+            this.editor=hoge
+            console.log("aaa")
         }
     }
 })
