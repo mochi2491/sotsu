@@ -27,6 +27,7 @@
       <v-row>
         <v-col cols="6" md="6">
           <v-textarea
+            v-bind="InputText"
             solo
             name="inputData"
             background-color="white"
@@ -34,6 +35,7 @@
         </v-col>
       </v-row>
     </div>
+    <div class="OutputField">{{ OutputText }}</div>
   </div>
 </template>
 
@@ -47,6 +49,10 @@ export default {
     return {
       roomName: "",
       content: "",
+      InputText: "",
+      OutputText: "",
+      sessionId: "",
+      res: Object,
     };
   },
   computed: {
@@ -68,8 +74,60 @@ export default {
   },
   methods: {
     compile: function () {
-      
+      function sleep(a) {
+        var dt1 = new Date().getTime();
+        var dt2 = new Date().getTime();
+        while (dt2 < dt1 + a) {
+          dt2 = new Date().getTime();
+        }
+        return;
+      }
+      async function postData(url = "", data = {}) {
+        const response = await fetch(url, {
+          method: "POST",
+          mode: "cors",
+          cache: "no-cache",
+          credentials: "same-origin",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          redirect: "follow",
+          referrerPolicy: "no-referrer",
+          body: JSON.stringify(data),
+        });
+        return response.json();
+      }
+      async function getData(url) {
+        const response = await fetch(url);
+        return response.json();
+      }
+      async function getDetail(url) {
+        const response = await fetch(url);
+        return response.json();
+      }
+
+      async function main() {
+        const url = "http://api.paiza.io:80/runners/create";
+        const data  = {
+          source_code: this.content,
+          language: "python3",
+          input: this.InputText,
+          api_key: "guest",
+        };
+        this.res = postData(url, data);
+      }
+      this.sessionId = this.res.id;
+      const url2 = `http://api.paiza.io/runners/get_status?id=${this.sessionId}&api_key=guest`;
+      getData(url2);
+
+      sleep(2000);
+      this.res2 = getData(url2);
+      const url3 = `http://api.paiza.io/runners/get_details?id=${this.sessionId}&api_key=guest`;
+      const res3 = getDetail(url3);
+      this.OutputText = res3.stdout;
+      main();
     },
+
     login: function () {
       ws.send(this.roomName);
     },
