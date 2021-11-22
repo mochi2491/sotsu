@@ -51,8 +51,6 @@ export default {
       content: "",
       InputText: "",
       OutputText: "",
-      sessionId: "",
-      res: Object,
     };
   },
   computed: {
@@ -105,26 +103,26 @@ export default {
         const response = await fetch(url);
         return response.json();
       }
-
       async function main() {
         const url = "http://api.paiza.io:80/runners/create";
-        const data  = {
-          source_code: this.content,
+        const data = {
+          source_code: 'print("aaa")',
           language: "python3",
-          input: this.InputText,
+          input: "",
           api_key: "guest",
         };
-        this.res = postData(url, data);
-      }
-      this.sessionId = this.res.id;
-      const url2 = `http://api.paiza.io/runners/get_status?id=${this.sessionId}&api_key=guest`;
-      getData(url2);
+        const res = await postData(url, data);
+        let sessionId = res.id;
+        const url2 = `http://api.paiza.io/runners/get_status?id=${sessionId}&api_key=guest`;
 
-      sleep(2000);
-      this.res2 = getData(url2);
-      const url3 = `http://api.paiza.io/runners/get_details?id=${this.sessionId}&api_key=guest`;
-      const res3 = getDetail(url3);
-      this.OutputText = res3.stdout;
+        sleep(2000);
+        await getData(url2);
+        const url3 = `http://api.paiza.io/runners/get_details?id=${sessionId}&api_key=guest`;
+        const res3 = await getDetail(url3);
+        console.log(res3);
+        this.OutputText = res3.stdout;
+      }
+
       main();
     },
 
