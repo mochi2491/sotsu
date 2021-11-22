@@ -1,16 +1,18 @@
 <template>
   <div>
-    <v-row>
-      <v-col cols="12" sm="6" class="py-2">
-        <v-btn v-on:click="compile" outlined>
-          <v-icon>mdi-play-circle-outline</v-icon>
-        </v-btn>
-      </v-col>
-    </v-row>
+    <div class="d-flex justify" style="height: 36px">
+      <v-btn v-on:click="compile" outlined style="height: 36px">
+        <v-icon>mdi-play-circle-outline</v-icon>
+      </v-btn>
+      <v-switch
+        v-model="switch1"
+        style="margin-top: 2px; height: 36px"
+      ></v-switch>
+    </div>
     <div style="height: 200px">
       <editor
         editor-id="editorA"
-        content="contentA"
+        content="content"
         v-on:change-content="changeContent"
       >
       </editor>
@@ -51,7 +53,13 @@ export default {
       content: "",
       InputText: "",
       OutputText: "",
+      switch1: false,
     };
+  },
+  watch: {
+    fusionString: function (val) {
+      ws.send(val);
+    },
   },
   computed: {
     clock: function () {
@@ -66,20 +74,40 @@ export default {
         this.clock.getSeconds()
       );
     },
+    contentLength: function () {
+      return this.content.length;
+    },
+    waitStatus: function () {
+      if (this.switch1) {
+        return "WAIT";
+      } else {
+        return "WORK";
+      }
+    },
     fusionString: function () {
-      return this.content + ":" + this.now;
+      return (
+        this.content +
+        "," +
+        this.now +
+        "," +
+        this.contentLength +
+        "," +
+        this.waitStatus
+      );
     },
   },
   methods: {
-    compile: function () {
-      function sleep(a) {
-        var dt1 = new Date().getTime();
-        var dt2 = new Date().getTime();
-        while (dt2 < dt1 + a) {
-          dt2 = new Date().getTime();
-        }
-        return;
+    sleep: function (a) {
+      var dt1 = new Date().getTime();
+      var dt2 = new Date().getTime();
+      while (dt2 < dt1 + a) {
+        dt2 = new Date().getTime();
       }
+      return;
+    },
+    compile: function () {
+      let that = this;
+
       async function postData(url = "", data = {}) {
         const response = await fetch(url, {
           method: "POST",
@@ -100,13 +128,18 @@ export default {
         return response.json();
       }
       async function getDetail(url) {
-        const response = await fetch(url);
+        //let that=this;
+        const response = await fetch(url).then((response) => {
+          //that.OutputText=response.json().stdout;
+          return response;
+        });
         return response.json();
       }
+
       async function main() {
         const url = "http://api.paiza.io:80/runners/create";
         const data = {
-          source_code: 'print("aaa")',
+          source_code: that.content,
           language: "python3",
           input: "",
           api_key: "guest",
@@ -115,24 +148,21 @@ export default {
         let sessionId = res.id;
         const url2 = `http://api.paiza.io/runners/get_status?id=${sessionId}&api_key=guest`;
 
-        sleep(2000);
+        that.sleep(2000);
         await getData(url2);
         const url3 = `http://api.paiza.io/runners/get_details?id=${sessionId}&api_key=guest`;
         const res3 = await getDetail(url3);
-        console.log(res3);
-        this.OutputText = res3.stdout;
+        that.OutputText = res3.stdout;
       }
 
       main();
     },
-
     login: function () {
       ws.send(this.roomName);
     },
     changeContent(val) {
       if (this.content !== val) {
         this.content = val;
-        ws.send(this.fusionString);
       }
     },
   },
