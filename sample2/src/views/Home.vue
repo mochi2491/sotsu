@@ -54,17 +54,17 @@ export default {
       InputText: "",
       OutputText: "",
       switch1: false,
+      clock: new Date(),
+      errDetail: "",
     };
   },
   watch: {
     fusionString: function (val) {
-      ws.send(val);
+      this.clock = new Date();
+      ws.send(this.now + val);
     },
   },
   computed: {
-    clock: function () {
-      return new Date();
-    },
     now: function () {
       return (
         this.clock.getHours() +
@@ -86,13 +86,14 @@ export default {
     },
     fusionString: function () {
       return (
-        this.content +
         "," +
-        this.now +
+        this.content +
         "," +
         this.contentLength +
         "," +
-        this.waitStatus
+        this.waitStatus +
+        "," +
+        this.errDetail
       );
     },
   },
@@ -153,6 +154,7 @@ export default {
         const url3 = `http://api.paiza.io/runners/get_details?id=${sessionId}&api_key=guest`;
         const res3 = await getDetail(url3);
         that.OutputText = res3.stdout;
+        that.errDetail = res3.stderr;
       }
 
       main();
