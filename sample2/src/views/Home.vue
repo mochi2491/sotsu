@@ -131,9 +131,7 @@ export default {
         return response.json();
       }
       async function getDetail(url) {
-        //let that=this;
         const response = await fetch(url).then((response) => {
-          //that.OutputText=response.json().stdout;
           return response;
         });
         return response.json();
@@ -157,6 +155,7 @@ export default {
         const res3 = await getDetail(url3);
         that.OutputText = res3.stdout;
         that.errDetail = res3.stderr;
+        console.log(res3.result);
       }
 
       main();
