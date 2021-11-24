@@ -56,12 +56,14 @@ export default {
       switch1: false,
       clock: new Date(),
       errDetail: "",
+      codeEditAmount: -1,
+      beforeString: "",
     };
   },
   watch: {
     fusionString: function (val) {
       this.clock = new Date();
-      ws.send(this.now + val);
+      ws.send(this.now + val + ",-1");
     },
   },
   computed: {
@@ -161,11 +163,52 @@ export default {
     },
     login: function () {
       ws.send(this.roomName);
+      setInterval(this.setString, 10000);
     },
     changeContent(val) {
       if (this.content !== val) {
         this.content = val;
       }
+    },
+    setString: function () {
+      let that = this;
+      let currentString = that.content;
+      let stringDefferent = that.getStringDifferent(
+        that.beforeString,
+        currentString
+      );
+      that.beforeString = currentString;
+      that.clock = new Date();
+      ws.send(that.now + that.fusionString + "," + stringDefferent);
+    },
+    getStringDifferent: function (str1, str2) {
+      var x = str1.length;
+      var y = str2.length;
+
+      var d = [];
+      var i = 0;
+      var j = 1;
+      for (i = 0; i <= x; i++) {
+        d[i] = [];
+        d[i][0] = i;
+      }
+      for (i = 0; i <= y; i++) {
+        d[0][i] = i;
+      }
+
+      var cost = 0;
+      for (i = 1; i <= x; i++) {
+        for (j = 1; j <= y; j++) {
+          cost = str1[i - 1] == str2[j - 1] ? 0 : 1;
+
+          d[i][j] = Math.min(
+            d[i - 1][j] + 1,
+            d[i][j - 1] + 1,
+            d[i - 1][j - 1] + cost
+          );
+        }
+      }
+      return d[x][y];
     },
   },
 };
