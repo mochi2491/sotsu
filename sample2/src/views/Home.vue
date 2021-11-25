@@ -38,6 +38,10 @@
       </v-row>
     </div>
     <div class="OutputField">{{ OutputText }}</div>
+  <nav>
+    <router-link to="/admin">admin</router-link>
+
+  </nav>
   </div>
 </template>
 
