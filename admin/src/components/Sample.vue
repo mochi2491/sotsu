@@ -1,6 +1,20 @@
 <template>
   <div>
-      <apexchart type="line" height="350" :series="series"></apexchart>
+    <vue-apex-charts
+      width="500"
+      type="line"
+      :options="chartOptions"
+      :series="series"
+    >
+    </vue-apex-charts>
+    <v-card class="workTime" max-width="344" outlined>
+      {{ processTime }}
+    </v-card>
+    <v-card class="errorInfo" max-width="344" outlined>
+      <v-icon>
+        
+      </v-icon>
+    </v-card>
   </div>
 </template>
 
@@ -8,46 +22,35 @@
 import VueApexCharts from "vue-apexcharts";
 export default {
   components: {
-    apexchart: VueApexCharts,
+    VueApexCharts,
   },
-  data(){
-      return{
-          series: [{
-              name: "Desktops",
-              data: [10, 41, 35, 51, 49, 62, 69, 91, 148]
-          }],
-          chartOptions: {
-            chart: {
-              height: 350,
-              type: 'line',
-              zoom: {
-                enabled: false
-              }
-            },
-            dataLabels: {
-              enabled: false
-            },
-            stroke: {
-              curve: 'straight'
-            },
-            title: {
-              text: 'Product Trends by Month',
-              align: 'left'
-            },
-            grid: {
-              row: {
-                colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-                opacity: 0.5
-              },
-            },
-            xaxis: {
-              categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
-            }
-          },
-      }
+  data() {
+    return {
+      minute:0,
+      second:0,
+
+      chartOptions: {
+        chart: {
+          id: "vuechart-example",
+        },
+        xaxis: {
+          categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998],
+        },
+      },
+      series: [
+        {
+          name: "series-1",
+          data: [30, 40, 35, 50, 49, 60, 70, 91],
+        },
+      ],
+    };
+  },
+  computed:{
+    processTime:function(){
+      return this.minute+":"+this.second
+    }
   }
 };
-
 
 var ws = new WebSocket("ws://localhost:10005");
 
