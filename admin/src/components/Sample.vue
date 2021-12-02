@@ -1,20 +1,45 @@
 <template>
-  <div>
-    <vue-apex-charts
-      width="500"
-      type="line"
-      :options="chartOptions"
-      :series="series"
-    >
-    </vue-apex-charts>
-    <v-card class="workTime" max-width="344" outlined>
-      {{ processTime }}
+  <div class="d-flex justify">
+    <v-card class="graph" max-width="500" height="330" outlined>
+      <vue-apex-charts
+        width="500"
+        type="line"
+        :options="chartOptions"
+        :series="series"
+      >
+      </vue-apex-charts>
     </v-card>
-    <v-card class="errorInfo" max-width="344" outlined>
-      <v-icon>
-        
-      </v-icon>
-    </v-card>
+    <div>
+      <v-card class="workTime" width="100" height="110" outlined>
+        <div class="d-flex-column">
+          <div>作業時間</div>
+          <div>
+            {{ processTime }}
+          </div>
+        </div>
+      </v-card>
+      <v-card class="errorInfo" width="100" height="110" outlined>
+        <div class="d-flex-column">
+          <div v-if="errorInfo === 'YET'">
+            <v-icon> mdi-minus-circle-outline </v-icon>
+          </div>
+          <div v-else-if="errorInfo === 'ERROR'">
+            <v-icon> mdi-close-circle-outline </v-icon>
+          </div>
+          <div v-else-if="errorInfo === 'SUCCESS'">
+            <v-icon> mdi-check-circle-outline </v-icon>
+          </div>
+        </div>
+      </v-card>
+      <v-card class="waitInfo" width="100" height="110" outlined>
+        <div v-if="waitState === 'WORKING'">
+          <v-icon> mdi-draw </v-icon>
+        </div>
+        <div v-if="waitState === 'WAITING'">
+          <v-icon> mdi-hand-front-left-outline </v-icon>
+        </div>
+      </v-card>
+    </div>
   </div>
 </template>
 
@@ -26,9 +51,10 @@ export default {
   },
   data() {
     return {
-      minute:0,
-      second:0,
-
+      minute: 0,
+      second: 0,
+      errorInfo: "YET",
+      waitState: "WORKING",
       chartOptions: {
         chart: {
           id: "vuechart-example",
@@ -45,11 +71,11 @@ export default {
       ],
     };
   },
-  computed:{
-    processTime:function(){
-      return this.minute+":"+this.second
-    }
-  }
+  computed: {
+    processTime: function () {
+      return this.minute + ":" + this.second;
+    },
+  },
 };
 
 var ws = new WebSocket("ws://localhost:10005");
