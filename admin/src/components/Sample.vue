@@ -11,33 +11,52 @@
     </v-card>
     <div>
       <v-card class="workTime" width="100" height="110" outlined>
-        <div class="d-flex-column">
-          <div>作業時間</div>
-          <div>
+        <div align="center">
+          <div align="center">作業時間</div>
+          <div align="center">
             {{ processTime }}
           </div>
         </div>
       </v-card>
-      <v-card class="errorInfo" width="100" height="110" outlined>
-        <div class="d-flex-column">
-          <div v-if="errorInfo === 'YET'">
-            <v-icon> mdi-minus-circle-outline </v-icon>
-          </div>
-          <div v-else-if="errorInfo === 'ERROR'">
-            <v-icon> mdi-close-circle-outline </v-icon>
-          </div>
-          <div v-else-if="errorInfo === 'SUCCESS'">
-            <v-icon> mdi-check-circle-outline </v-icon>
-          </div>
-        </div>
+      <v-card
+        class="d-flex justifiy-content-center"
+        width="100"
+        height="110"
+        outlined
+      >
+        <v-row align="center">
+          <v-col align="center">
+            <div class="d-flex-column">
+              <div v-if="errorInfo === 'YET'">
+                <v-icon x-large> mdi-minus-circle-outline </v-icon>
+              </div>
+              <div v-else-if="errorInfo === 'ERROR'">
+                <v-icon x-large> mdi-close-circle-outline </v-icon>
+              </div>
+              <div v-else-if="errorInfo === 'SUCCESS'">
+                <v-icon x-large> mdi-check-circle-outline </v-icon>
+              </div>
+            </div>
+          </v-col>
+        </v-row>
       </v-card>
-      <v-card class="waitInfo" width="100" height="110" outlined>
-        <div v-if="waitState === 'WORKING'">
-          <v-icon> mdi-draw </v-icon>
-        </div>
-        <div v-if="waitState === 'WAITING'">
-          <v-icon> mdi-hand-front-left-outline </v-icon>
-        </div>
+
+      <v-card
+        class="d-flex justifiy-content-center"
+        width="100"
+        height="110"
+        outlined
+      >
+        <v-row align="center">
+          <v-col align="center">
+            <div v-if="waitState === 'WORKING'">
+              <v-icon x-large> mdi-draw </v-icon>
+            </div>
+            <div v-if="waitState === 'WAITING'">
+              <v-icon x-large> mdi-hand-front-left-outline </v-icon>
+            </div>
+          </v-col>
+        </v-row>
       </v-card>
     </div>
   </div>
