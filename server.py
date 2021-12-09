@@ -6,11 +6,19 @@ import os
 users={}
 rooms={}
 userDatas={}
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
+
+cred = credentials.Certificate('sample-3a85c-firebase-adminsdk-8f6p8-284203a193.json')
+app = firebase_admin.initialize_app(cred) 
+
+db = firestore.client()
 
  
 def start():
 
-
+    
 
     #クライアントが接続してきた時のイベント
     def new_client(client, server):
@@ -51,6 +59,7 @@ def start():
         elif users[client['id']]["state"] == 1:
             for speaker in rooms[users[client['id']]["room"]]:
                 if client != speaker:
+                    print("send")
                     server.send_message(speaker,message)
             print("room", users[client['id']], client['address'], "send", message)
     # 10005番ポートでサーバーを立ち上げる

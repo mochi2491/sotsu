@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WEBサイトから取得したデータをFirebase CloudFirestoreに保存</title>
+</head>
+
+<body>
+  <div id="app">
+    <ul>
+      <li v-for="data in allData">
+        {{data['id']}} {{data['pass']}} {{data['isAdmin']}}
+      </li>
+    </ul>
+
+
+    <p>
+      学籍番号：<input v-model="id" placeholder="学籍番号">
+      パスワード：<input v-model="pass" placeholder="パスワード">
+      アドミン：<input type="checkbox" v-model="isAdmin">
+      <button v-on:click='post'>送信</button>
+    </p>
+  </div>
+
+  <script src="https://unpkg.com/vue"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-firestore.js"></script>
+  <script>
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCdE5xsoiJGhv6Sef1KMtvC05wvAZ-HkzU",
+      authDomain: "sample-3a85c.firebaseapp.com",
+      projectId: "sample-3a85c",
+      storageBucket: "sample-3a85c.appspot.com",
+      messagingSenderId: "540782118538",
+      appId: "1:540782118538:web:0cfea3869a36b645a6cf73",
+      measurementId: "${config.measurementId}"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const app = new Vue({
+      el: '#app',
+      data: {
+        allData: [],
+        id: '',
+        pass: '',
+        isAdmin:false
+      },
+      mounted: async function () {
+        db.collection('user').onSnapshot(snapshot => {
+          // データベースに変更があった場合実行される
+          console.log('on snapshot!');
+          // 更新されたデータだけでなく、全て取得される
+          this.allData = [];
+          snapshot.forEach(doc => {
+            console.log(doc);
+            this.allData.push(doc.data());
+          });
+        });
+      },
+      methods: {
+        //データ追加
+        post: async function () {
+          await db.collection("user").add({
+            id: this.id,
+            pass: this.pass,
+            isAdmin:this.isAdmin
+
+          });
+        }
+      }
+    })
+  </script>
+
+</body>
+
+</html>
