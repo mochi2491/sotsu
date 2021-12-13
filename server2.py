@@ -7,7 +7,6 @@ from websocket_server import WebsocketServer
 import time
 import os
 users = {}
-userDatas = {}
 cred = credentials.Certificate(
     'sample-3a85c-firebase-adminsdk-8f6p8-284203a193.json')
 app = firebase_admin.initialize_app(cred)
@@ -23,10 +22,11 @@ def start():
         server.send_message(client, 'login')
         global users
         users[client['id']] = {"state": 0,
-                               "ID": client['id'], "isAdmin": False}
+                               "ID": client['id'], "isAdmin":False ,"connection":client}
 
     def client_left(client, server):
         global users
+        global clients
         print('Client {}:{} has left.'.format(
             client['address'][0], client['address'][1]))
         users.pop(client['id'])
@@ -34,28 +34,34 @@ def start():
 
     def message_received(client, server, message):
         global users
+        global clients
         print("received"+message)
         if users[client['id']]["state"] == 0:  # ログイン前
             hoge = user_ref.where(u'id', u'==', message)
             docs = hoge.stream()
             for doc in docs:  # ユーザのIDがデータベースのものと一致するか確認
                 print(doc.to_dict()["id"])
-                if doc.id == message:  # 一致するならstateを1に
+                if doc.to_dict()["id"] == message:  # 一致するならstateを1に
                     print(client['address'], "join", message)
-                    if doc.isAdmin == True:  # ユーザがアドミンか確認
-                        users[client['id']]["isAdmin"] == True
+                    if doc.to_dict()["isAdmin"] == True:  # ユーザがアドミンか確認
+                        users[client['id']]["isAdmin"] = True
+                    server.send_message(client,"this id is exist") #ログイン成功メッセージを返す
                     users[client['id']]["state"] = 1
                     break
+            if users[client['id']]["state"] == 0: # idが存在しなかったらエラーメッセージを返す
                 # 一致しないならエラーメッセージを返す
+                print("this id is not exist")
+                server.send_message(client,"this id is not exist")
+                
         elif users[client['id']]["state"] == 1:
             if users[client['id']]["isAdmin"] == True:  # ユーザがアドミンかどうか確認
+                print("aaa")
                 a = 1
-
             else:
-                for listener in users:
-                    if listener['id']["isAdmin"] == True:  # ユーザの中からアドミンを抽出
+                for user in users.values():
+                    if user["isAdmin"]==True:
                         print("send")
-                        server.send_message(listener, message)
+                        server.send_message(user["connection"],message)
                 # アドミンでないならアドミンに送信
 
     server = WebsocketServer(port=10005, host='0.0.0.0')

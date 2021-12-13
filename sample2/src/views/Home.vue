@@ -5,7 +5,7 @@
         <v-card>
           <div class="loginForm">
             <v-row>
-              <v-col >
+              <v-col>
                 <v-text-field label="Room" solo v-model="roomName">
                 </v-text-field>
               </v-col>
@@ -51,6 +51,7 @@
 
 <script>
 import Editor from "../components/Editor";
+var receivedMessage
 export default {
   components: {
     Editor,
@@ -74,6 +75,11 @@ export default {
     fusionString: function (val) {
       this.clock = new Date();
       ws.send(this.now + val + ",-1");
+    },
+    receivedMessage: function (val) {
+      if (val == "this id is exist") {
+        this.overlay = false;
+      }
     },
   },
   computed: {
@@ -171,9 +177,9 @@ export default {
       main();
     },
     login: function () {
-      if(this.roomName!=""){
-      ws.send(this.roomName);
-      setInterval(this.setString, 10000);
+      if (this.roomName != "") {
+        ws.send(this.roomName);
+        setInterval(this.setString, 10000);
       }
     },
     changeContent(val) {
@@ -233,6 +239,7 @@ ws.onopen = function () {
 
 ws.onmessage = function (e) {
   // e.data contains received string.
+  receivedMessage = e.data;
   console.log("onmessage: " + e.data);
 };
 

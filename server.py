@@ -66,6 +66,7 @@ def start():
             users[client['id']]["state"] = 1
         elif users[client['id']]["state"] == 1:
             for speaker in rooms[users[client['id']]["room"]]:
+                print(speaker)
                 if client != speaker:
                     print("send")
                     server.send_message(speaker, message)
