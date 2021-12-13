@@ -68,12 +68,17 @@ export default {
   components: {
     VueApexCharts,
   },
+  props: {
+    nowString: String,
+    changeAmount: Number,
+    startTime: Number,
+    errorInfo: String,
+    waitState: String,
+  },
   data() {
     return {
       minute: 0,
       second: 0,
-      errorInfo: "YET",
-      waitState: "WORKING",
       chartOptions: {
         chart: {
           id: "vuechart-example",
@@ -96,8 +101,6 @@ export default {
     },
   },
 };
-
-
 </script>
 
 <style scoped>

@@ -1,5 +1,20 @@
 <template>
   <div>
+    <div>
+      <v-overlay>
+        <v-card>
+          <div class="loginForm">
+            <v-row>
+              <v-col >
+                <v-text-field label="Room" solo v-model="roomName">
+                </v-text-field>
+              </v-col>
+              <v-btn style="margin-top: 19px" v-on:click="login">log in</v-btn>
+            </v-row>
+          </div>
+        </v-card>
+      </v-overlay>
+    </div>
     <div class="d-flex justify" style="height: 36px">
       <v-btn v-on:click="compile" outlined style="height: 36px">
         <v-icon>mdi-play-circle-outline</v-icon>
@@ -17,14 +32,7 @@
       >
       </editor>
     </div>
-    <div class="loginForm">
-      <v-row>
-        <v-col cols="12" sm="4" md="2">
-          <v-text-field label="Room" solo v-model="roomName"> </v-text-field>
-        </v-col>
-        <v-btn style="margin-top: 19px" v-on:click="login">log in</v-btn>
-      </v-row>
-    </div>
+
     <div class="InputField">
       <v-row>
         <v-col cols="6" md="6">
@@ -58,6 +66,8 @@ export default {
       errDetail: "",
       codeEditAmount: -1,
       beforeString: "",
+      absolute: true,
+      overlay: false,
     };
   },
   watch: {
@@ -161,8 +171,10 @@ export default {
       main();
     },
     login: function () {
+      if(this.roomName!=""){
       ws.send(this.roomName);
       setInterval(this.setString, 10000);
+      }
     },
     changeContent(val) {
       if (this.content !== val) {

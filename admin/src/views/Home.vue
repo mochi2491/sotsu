@@ -1,6 +1,12 @@
 <template>
   <div>
-    <sample></sample>
+    <sample
+      v-bind:nowString="studentData.nowString"
+      :changeAmount="studentData.changeAmount"
+      :startTime="studentData.startTime"
+      :errorInfo="studentData.errorInfo"
+      :waitState="studentData.waitState"
+    ></sample>
   </div>
 </template>
 
@@ -16,13 +22,15 @@ export default {
         roomID: "",
         inputGraph: {
           nowString: "",
+          changeAmount: 0,
         },
         elapsedTime: {
           startTime: 0,
         },
-        errorInfo: {},
-        waitState: {},
+        errorInfo: "YET",
+        waitState: "WORKING",
       },
+      studentList: [],
     };
   },
 };
