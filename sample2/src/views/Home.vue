@@ -1,7 +1,7 @@
 <template>
   <div>
     <div>
-      <v-overlay>
+      <v-overlay :value="overlay">
         <v-card>
           <div class="loginForm">
             <v-row>
@@ -51,7 +51,6 @@
 
 <script>
 import Editor from "../components/Editor";
-var receivedMessage
 export default {
   components: {
     Editor,
@@ -68,17 +67,19 @@ export default {
       codeEditAmount: -1,
       beforeString: "",
       absolute: true,
-      overlay: false,
+      overlay: true,
+      connection: null,
+      receivedMessage: "",
     };
   },
   watch: {
     fusionString: function (val) {
       this.clock = new Date();
-      ws.send(this.now + val + ",-1");
+      this.connection.send(this.roomName+","+this.now + val + ",-1");
     },
     receivedMessage: function (val) {
-      if (val == "this id is exist") {
-        this.overlay = false;
+      if(val=="this id is exist"){
+        this.overlay=false
       }
     },
   },
@@ -115,6 +116,26 @@ export default {
       );
     },
   },
+  created: function () {
+    let that = this;
+    console.log("Starting connection to WebSocket Server");
+    this.connection = new WebSocket("ws://localhost:10005");
+    this.connection.onopen = function () {
+      console.log("Successfully connected to the echo websocket server...");
+    };
+    this.connection.onmessage = function (event) {
+      console.log(event.data);
+      that.receivedMessage = event.data;
+    };
+    this.connection.onclose = function () {
+      console.log("onclose");
+    };
+
+    this.connection.onerror = function (e) {
+      console.log("onerror");
+      console.log(e);
+    };
+  },  
   methods: {
     sleep: function (a) {
       var dt1 = new Date().getTime();
@@ -178,7 +199,7 @@ export default {
     },
     login: function () {
       if (this.roomName != "") {
-        ws.send(this.roomName);
+        this.connection.send(this.roomName);
         setInterval(this.setString, 10000);
       }
     },
@@ -196,7 +217,9 @@ export default {
       );
       that.beforeString = currentString;
       that.clock = new Date();
-      ws.send(that.now + that.fusionString + "," + stringDefferent);
+      this.connection.send(
+        that.roomName+","+that.now + that.fusionString + "," + stringDefferent
+      );
     },
     getStringDifferent: function (str1, str2) {
       var x = str1.length;
@@ -230,27 +253,7 @@ export default {
   },
 };
 
-var ws = new WebSocket("ws://localhost:10005");
 
-// 接続
-ws.onopen = function () {
-  console.log("onopen");
-};
-
-ws.onmessage = function (e) {
-  // e.data contains received string.
-  receivedMessage = e.data;
-  console.log("onmessage: " + e.data);
-};
-
-ws.onclose = function () {
-  console.log("onclose");
-};
-
-ws.onerror = function (e) {
-  console.log("onerror");
-  console.log(e);
-};
 </script>
 
 <style scoped>
