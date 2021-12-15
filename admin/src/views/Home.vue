@@ -23,6 +23,18 @@
         :errorInfo="studentData.errorInfo"
         :waitState="studentData.waitState"
       ></sample>
+      <ul>
+        <li v-for="student in studentList" :key="student.studentID">
+          <sample
+            :nowString="student.nowString"
+            :changeAmount="student.changeAmount"
+            :startTime="student.startTime"
+            :errorInfo="student.errorInfo"
+            :waitState="student.waitState"
+          ></sample>
+        </li>
+      </ul>
+      {{studentList}}
     </div>
   </div>
 </template>
