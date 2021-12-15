@@ -70,16 +70,19 @@ export default {
       overlay: true,
       connection: null,
       receivedMessage: "",
+      startTime: 0,
     };
   },
   watch: {
     fusionString: function (val) {
       this.clock = new Date();
-      this.connection.send(this.roomName+","+this.now + val + ",-1");
+      this.connection.send(
+        0 + "," + this.roomName + "," + this.now + val + ",-1," + this.startTime
+      );
     },
     receivedMessage: function (val) {
-      if(val=="this id is exist"){
-        this.overlay=false
+      if (val == "this id is exist") {
+        this.overlay = false;
       }
     },
   },
@@ -135,7 +138,8 @@ export default {
       console.log("onerror");
       console.log(e);
     };
-  },  
+    this.startTime = this.now;
+  },
   methods: {
     sleep: function (a) {
       var dt1 = new Date().getTime();
@@ -218,7 +222,16 @@ export default {
       that.beforeString = currentString;
       that.clock = new Date();
       this.connection.send(
-        that.roomName+","+that.now + that.fusionString + "," + stringDefferent
+        0 +
+          "," +
+          that.roomName +
+          "," +
+          that.now +
+          that.fusionString +
+          "," +
+          stringDefferent +
+          "," +
+          that.startTime
       );
     },
     getStringDifferent: function (str1, str2) {
@@ -252,8 +265,6 @@ export default {
     },
   },
 };
-
-
 </script>
 
 <style scoped>

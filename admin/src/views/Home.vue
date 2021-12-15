@@ -40,15 +40,18 @@ export default {
       connection: null,
       receivedMessage: "",
       studentData: {
+        isOnline: true,
         studentID: "",
         inputGraph: {
           nowString: "",
           changeAmount: 0,
+          codeLength: 0,
         },
         elapsedTime: {
           startTime: 0,
         },
-        errorInfo: "YET",
+        errorInfo: "",
+        errorString: "",
         waitState: "WORKING",
       },
       studentList: {},
@@ -58,31 +61,39 @@ export default {
     receivedMessage: function (val) {
       if (val == "this id is admin") {
         this.overlay = false;
-      }
-      else if(val == "login"){
-        console.log("aa")
-      } 
-      else if(val== "2017e29"){
-        console.log("goodbye")
-      }
-      else {
+      } else if (val == "login") {
+        console.log("aa");
+      } else {
         let splitedMessage = this.receivedMessage.split(",");
-        console.log(splitedMessage[0]);
-        this.studentList[splitedMessage[0]] = {
-          studentData: {
-            studentID: splitedMessage[0],
+        if (splitedMessage[0] == 0) {
+          this.studentList[splitedMessage[1]] = {
+            isOnline: true,
+            studentID: splitedMessage[1],
             inputGraph: {
-              nowString: "",
-              changeAmount: 0,
+              nowString: splitedMessage[3],
+              changeAmount: splitedMessage[7],
+              codeLength: splitedMessage[4],
             },
             elapsedTime: {
-              startTime: splitedMessage[1],
+              startTime: splitedMessage[8],
+              nowTime: splitedMessage[2],
             },
-            errorInfo: "YET",
-            waitState: splitedMessage[4],
+            errorInfo: "",
+            errorString: splitedMessage[6],
+            waitState: splitedMessage[5],
+          };
+          if (splitedMessage[6] == "") {
+            this.studentList[splitedMessage[1]]["errorInfo"] = "";
+          } else {
+            this.studentList[splitedMessage[1]]["errorInfo"] = "ERROR";
           }
-        };
-        console.log(this.studentList)
+
+          console.log(this.studentList);
+        } else if (splitedMessage[0] == 1) {
+          //quit
+          this.studentList[splitedMessage[1]]["isOnline"] = false;
+          console.log(splitedMessage[1] + "quited");
+        }
       }
     },
   },
@@ -94,6 +105,7 @@ export default {
       console.log("Successfully connected to the echo websocket server...");
     };
     this.connection.onmessage = function (event) {
+      console.log(event.data);
       that.receivedMessage = event.data;
     };
     this.connection.onclose = function () {

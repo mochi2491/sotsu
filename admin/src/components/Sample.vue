@@ -27,7 +27,7 @@
         <v-row align="center">
           <v-col align="center">
             <div class="d-flex-column">
-              <div v-if="errorInfo === 'YET'">
+              <div v-if="errorInfo === ''">
                 <v-icon x-large> mdi-minus-circle-outline </v-icon>
               </div>
               <div v-else-if="errorInfo === 'ERROR'">

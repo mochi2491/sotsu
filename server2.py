@@ -29,7 +29,7 @@ def start():
         global clients
         for user in users.values():
             if user["isAdmin"] == True:
-                server.send_message(user["connection"],user["userID"])
+                server.send_message(user["connection"],"1"+","+users[client['id']]["userID"]+",,,,,,,")
         print('Client {}:{} has left.'.format(
             client['address'][0], client['address'][1]))
         users.pop(client['id'])
@@ -39,7 +39,7 @@ def start():
     def message_received(client, server, message):
         global users
         global clients
-        print("received"+message)
+        print("received" +message)
         if users[client['id']]["state"] == 0:  # ログイン前
             hoge = user_ref.where(u'id', u'==', message)
             docs = hoge.stream()
@@ -47,7 +47,6 @@ def start():
                 print(doc.to_dict()["id"])
                 if doc.to_dict()["id"] == message:  # 一致するならstateを1に
                     print(client['address'], "join", message)
-                    print(doc.to_dict()["isAdmin"])
                     if doc.to_dict()["isAdmin"] == True:  # ユーザがアドミンか確認
                         users[client['id']]["isAdmin"] = True
                         server.send_message(client, "this id is admin")
