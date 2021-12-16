@@ -48,7 +48,7 @@
     <div class="OutputField">{{ OutputText }}</div>
   </div>
 </template>
-
+  
 <script>
 import Editor from "../components/Editor";
 export default {

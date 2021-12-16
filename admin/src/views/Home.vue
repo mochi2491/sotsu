@@ -17,7 +17,7 @@
     </div>
     <div>
       <sample
-        v-bind:nowString="studentData.nowString"
+        :nowString="studentData.nowString"
         :changeAmount="studentData.changeAmount"
         :startTime="studentData.startTime"
         :errorInfo="studentData.errorInfo"
@@ -28,14 +28,15 @@
           <sample
             :nowString="student.nowString"
             :changeAmount="student.changeAmount"
-            :startTime="student.startTime"
+            :startTime="student.elapsedTime.startTime"
+            :currentTime="student.elapsedTime.currentTime"
             :errorInfo="student.errorInfo"
             :waitState="student.waitState"
           ></sample>
         </li>
       </ul>
-      {{studentList}}
     </div>
+    
   </div>
 </template>
 
@@ -88,7 +89,7 @@ export default {
             },
             elapsedTime: {
               startTime: splitedMessage[8],
-              nowTime: splitedMessage[2],
+              currentTime: splitedMessage[2],
             },
             errorInfo: "",
             errorString: splitedMessage[6],
@@ -107,6 +108,7 @@ export default {
           console.log(splitedMessage[1] + "quited");
         }
       }
+      this.studentList =Object.assign({},this.studentList)
     },
   },
   created: function () {
