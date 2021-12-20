@@ -77,6 +77,7 @@ export default {
       } else if (val == "login") {
         console.log("aa");
       } else {
+        
         let splitedMessage = this.receivedMessage.split(",");
         if (splitedMessage[0] == 0) {
           this.studentList[splitedMessage[1]] = {

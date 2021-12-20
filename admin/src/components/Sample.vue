@@ -14,7 +14,7 @@
         <div align="center">
           <div align="center">作業時間</div>
           <div align="center">
-            {{elapsedTime}}
+            {{ elapsedTime }}
           </div>
         </div>
       </v-card>
@@ -71,7 +71,11 @@ export default {
   props: {
     nowString: String,
     changeAmount: Number,
-    startTime: String,
+    startTime:{
+      type:String,
+      default:"00:00:00"
+    
+    } ,
     currentTime: String,
     errorInfo: String,
     waitState: String,
@@ -81,7 +85,7 @@ export default {
       minute: 0,
       second: 0,
       start: 0,
-      now:0,
+      now: 0,
       chartOptions: {
         chart: {
           id: "vuechart-example",
@@ -111,28 +115,34 @@ export default {
   computed: {
     processTime: function () {
       return this.minute + ":" + this.second;
+      
     },
     elapsedTime: function () {
-      let a = this.now - this.start;
+      let a = this.now - this.first;
       let minute = a / 60;
-      let second = a - minute * 6;
-      return minute + ":" + second; 
+      minute = parseInt(minute);
+      let second = a % 60
+      second = parseInt(second);
+      return minute + ":" + second;
+    },
+    first: function () {
+      let time = this.startTime.split(":");
+      return (
+        parseInt(time[0]) * 3600 + parseInt(time[1]) * 60 + parseInt(time[2])
+      );
     },
   },
   watch: {
     changeAmount: function (val) {
       this.series.data.push(val);
     },
-    startTime: function (val) {
-      let time = val.split(":");
-      this.start = parseInt(time[0]) * 3600 + parseInt(time[1]) * 60 +parseInt(time[2]);
-    },
     currentTime: function (val) {
       let time = val.split(":");
-      this.now = parseInt(time[0]) * 3600 + parseInt(time[1]) * 60 +parseInt(time[2]);
-      console.log(this.now)
+      this.now =
+        parseInt(time[0]) * 3600 + parseInt(time[1]) * 60 + parseInt(time[2]);
     },
   },
+
 };
 </script>
 
