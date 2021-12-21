@@ -86,6 +86,7 @@ export default {
       second: 0,
       start: 0,
       now: 0,
+      errorState:"",
       chartOptions: {
         chart: {
           id: "vuechart-example",
@@ -141,6 +142,7 @@ export default {
       this.now =
         parseInt(time[0]) * 3600 + parseInt(time[1]) * 60 + parseInt(time[2]);
     },
+
   },
 
 };

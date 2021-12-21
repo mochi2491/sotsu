@@ -36,7 +36,6 @@
         </li>
       </ul>
     </div>
-    
   </div>
 </template>
 
@@ -77,8 +76,7 @@ export default {
       } else if (val == "login") {
         console.log("aa");
       } else {
-        
-        let splitedMessage = this.receivedMessage.split(",");
+        let splitedMessage = this.receivedMessage.split(",,");
         if (splitedMessage[0] == 0) {
           this.studentList[splitedMessage[1]] = {
             isOnline: true,
@@ -98,6 +96,8 @@ export default {
           };
           if (splitedMessage[6] == "") {
             this.studentList[splitedMessage[1]]["errorInfo"] = "";
+          } else if (splitedMessage[6] ==  "success") {
+            this.studentList[splitedMessage[1]]["errorInfo"] = "SUCCESS";
           } else {
             this.studentList[splitedMessage[1]]["errorInfo"] = "ERROR";
           }
@@ -109,7 +109,7 @@ export default {
           console.log(splitedMessage[1] + "quited");
         }
       }
-      this.studentList =Object.assign({},this.studentList)
+      this.studentList = Object.assign({}, this.studentList);
     },
   },
   created: function () {

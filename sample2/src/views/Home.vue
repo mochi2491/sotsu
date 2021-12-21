@@ -77,7 +77,14 @@ export default {
     fusionString: function (val) {
       this.clock = new Date();
       this.connection.send(
-        0 + "," + this.roomName + "," + this.now + val + ",-1," + this.startTime
+        0 +
+          ",," +
+          this.roomName +
+          ",," +
+          this.now +
+          val +
+          ",,-1,," +
+          this.startTime
       );
     },
     receivedMessage: function (val) {
@@ -108,13 +115,13 @@ export default {
     },
     fusionString: function () {
       return (
-        "," +
+        ",," +
         this.content +
-        "," +
+        ",," +
         this.contentLength +
-        "," +
+        ",," +
         this.waitStatus +
-        "," +
+        ",," +
         this.errDetail
       );
     },
@@ -195,7 +202,13 @@ export default {
         const url3 = `http://api.paiza.io/runners/get_details?id=${sessionId}&api_key=guest`;
         const res3 = await getDetail(url3);
         that.OutputText = res3.stdout;
-        that.errDetail = res3.stderr;
+        if (res3.result == "success") {
+          that.errDetail = "success";
+        } else if (res3.result == "failure") {
+          that.errDetail = res3.stderr;
+        } else {
+          console.log(res3.stderr)
+        }
         console.log(res3.result);
       }
 
@@ -223,14 +236,14 @@ export default {
       that.clock = new Date();
       this.connection.send(
         0 +
-          "," +
+          ",," +
           that.roomName +
-          "," +
+          ",," +
           that.now +
           that.fusionString +
-          "," +
+          ",," +
           stringDefferent +
-          "," +
+          ",," +
           that.startTime
       );
     },
