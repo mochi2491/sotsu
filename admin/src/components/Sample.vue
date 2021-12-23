@@ -2,6 +2,7 @@
   <div class="d-flex justify">
     <v-card class="graph" max-width="500" height="330" outlined>
       <vue-apex-charts
+        ref="realtimeChart"
         width="500"
         type="line"
         :options="chartOptions"
@@ -40,7 +41,6 @@
           </v-col>
         </v-row>
       </v-card>
-
       <v-card
         class="d-flex justifiy-content-center"
         width="100"
@@ -58,6 +58,7 @@
           </v-col>
         </v-row>
       </v-card>
+      {{ series[0].data }}
     </div>
   </div>
 </template>
@@ -70,12 +71,11 @@ export default {
   },
   props: {
     nowString: String,
-    changeAmount: Number,
-    startTime:{
-      type:String,
-      default:"00:00:00"
-    
-    } ,
+    changeAmount: String,
+    startTime: {
+      type: String,
+      default: "00:00:00",
+    },
     currentTime: String,
     errorInfo: String,
     waitState: String,
@@ -86,13 +86,14 @@ export default {
       second: 0,
       start: 0,
       now: 0,
-      errorState:"",
+      errorState: "",
       chartOptions: {
         chart: {
           id: "vuechart-example",
         },
         xaxis: {
           categories: [
+            "-1:40",
             "-1:30",
             "-1:20",
             "-1:10",
@@ -108,7 +109,7 @@ export default {
       series: [
         {
           name: "series-1",
-          data: [0, 0, 0, 0, 0, 0, 0, 0, 0],
+          data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         },
       ],
     };
@@ -116,13 +117,12 @@ export default {
   computed: {
     processTime: function () {
       return this.minute + ":" + this.second;
-      
     },
     elapsedTime: function () {
       let a = this.now - this.first;
       let minute = a / 60;
       minute = parseInt(minute);
-      let second = a % 60
+      let second = a % 60;
       second = parseInt(second);
       return minute + ":" + second;
     },
@@ -134,17 +134,35 @@ export default {
     },
   },
   watch: {
-    changeAmount: function (val) {
-      this.series.data.push(val);
-    },
     currentTime: function (val) {
       let time = val.split(":");
       this.now =
         parseInt(time[0]) * 3600 + parseInt(time[1]) * 60 + parseInt(time[2]);
+      let amount = parseInt(this.changeAmount);
+      if (amount >= 0) {
+        this.series[0].data.push(amount);
+        this.series[0].data.shift();
+        this.updaeSeriesLine();
+      } else if (amount == -1) {
+        console.log("amount=1");
+      } else {
+        console.log("unexpected number")
+      }
     },
-
   },
-
+  methods: {
+    updaeSeriesLine() {
+      this.$refs.realtimeChart.updateSeries(
+        [
+          {
+            data: this.series[0].data,
+          },
+        ],
+        false,
+        true
+      );
+    },
+  },
 };
 </script>
 

@@ -26,8 +26,8 @@
       <ul>
         <li v-for="student in studentList" :key="student.studentID">
           <sample
-            :nowString="student.nowString"
-            :changeAmount="student.changeAmount"
+            :nowString="student.inputGraph.nowString"
+            :changeAmount="student.inputGraph.changeAmount"
             :startTime="student.elapsedTime.startTime"
             :currentTime="student.elapsedTime.currentTime"
             :errorInfo="student.errorInfo"
