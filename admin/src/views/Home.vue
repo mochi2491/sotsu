@@ -23,6 +23,19 @@
         :errorInfo="studentData.errorInfo"
         :waitState="studentData.waitState"
       ></sample>
+      <ul id="progressList">
+        <li v-for="student in studentList" :key="student.studentID">
+          <sample
+            :nowString="student.inputGraph.nowString"
+            :changeAmount="student.inputGraph.changeAmount"
+            :startTime="student.elapsedTime.startTime"
+            :currentTime="student.elapsedTime.nowTime"
+            :errorInfo="student.errorInfo"
+            :waitState="student.waitState"
+          >
+          </sample>
+        </li>
+      </ul>
     </div>
   </div>
 </template>
@@ -71,7 +84,7 @@ export default {
             studentID: splitedMessage[1],
             inputGraph: {
               nowString: splitedMessage[3],
-              changeAmount: splitedMessage[7],
+              changeAmount: parseInt(splitedMessage[7]),
               codeLength: splitedMessage[4],
             },
             elapsedTime: {
@@ -87,7 +100,7 @@ export default {
           } else {
             this.studentList[splitedMessage[1]]["errorInfo"] = "ERROR";
           }
-
+          this.studentList = Object.assign({}, this.studentList, {});
           console.log(this.studentList);
         } else if (splitedMessage[0] == 1) {
           //quit
@@ -105,7 +118,7 @@ export default {
       console.log("Successfully connected to the echo websocket server...");
     };
     this.connection.onmessage = function (event) {
-      console.log(event.data);
+      //console.log(event.data);
       that.receivedMessage = event.data;
     };
     this.connection.onclose = function () {

@@ -2,6 +2,7 @@
   <div class="d-flex justify">
     <v-card class="graph" max-width="500" height="330" outlined>
       <vue-apex-charts
+        ref="realtimeChart"
         width="500"
         type="line"
         :options="chartOptions"
@@ -27,20 +28,17 @@
         <v-row align="center">
           <v-col align="center">
             <div class="d-flex-column">
+              {{ errorInfo }}
               <div v-if="errorInfo === ''">
                 <v-icon x-large> mdi-minus-circle-outline </v-icon>
               </div>
               <div v-else-if="errorInfo === 'ERROR'">
                 <v-icon x-large> mdi-close-circle-outline </v-icon>
               </div>
-              <div v-else-if="errorInfo === 'SUCCESS'">
-                <v-icon x-large> mdi-check-circle-outline </v-icon>
-              </div>
             </div>
           </v-col>
         </v-row>
       </v-card>
-
       <v-card
         class="d-flex justifiy-content-center"
         width="100"
@@ -49,10 +47,10 @@
       >
         <v-row align="center">
           <v-col align="center">
-            <div v-if="waitState === 'WORKING'">
+            <div v-if="waitState === 'WORK'">
               <v-icon x-large> mdi-draw </v-icon>
             </div>
-            <div v-if="waitState === 'WAITING'">
+            <div v-if="waitState === 'WAIT'">
               <v-icon x-large> mdi-hand-front-left-outline </v-icon>
             </div>
           </v-col>
@@ -71,7 +69,8 @@ export default {
   props: {
     nowString: String,
     changeAmount: Number,
-    startTime: Number,
+    startTime: String,
+    currentTime: String,
     errorInfo: String,
     waitState: String,
   },
@@ -79,6 +78,7 @@ export default {
     return {
       minute: 0,
       second: 0,
+      processTime: "",
       chartOptions: {
         chart: {
           id: "vuechart-example",
@@ -101,14 +101,37 @@ export default {
       series: [
         {
           name: "series-1",
-          data: [30, 40, 35, 50, 49, 60, 70, 91],
+          data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         },
       ],
     };
   },
   computed: {
-    processTime: function () {
-      return this.minute + ":" + this.second;
+    startSec: function () {
+      var time = this.startTime.split(":");
+      return (
+        parseInt(time[0]) * 3600 + parseInt(time[1]) * 60 + parseInt(time[2])
+      );
+    },
+  },
+  watch: {
+    currentTime: function (val) {
+      var time = val.split(":");
+      var currentSec =
+        parseInt(time[0]) * 3600 + parseInt(time[1]) * 60 + parseInt(time[2]);
+      var sec = currentSec - this.startSec;
+
+      this.processTime = Math.floor(sec / 60) + ":" + (sec % 60);
+
+      if (this.changeAmount != -1) {
+        this.series[0].data.shift();
+        this.series[0].data.push(this.changeAmount);
+        var line = this.series[0].data;
+        console.log(this.series[0].data);
+        this.series = [{ data: line }];
+      }
+
+      //this.$refs.realtimeChart.updataSeries(this.series[0].data);
     },
   },
 };
