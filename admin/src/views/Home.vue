@@ -100,7 +100,7 @@ export default {
   created: function () {
     let that = this;
     console.log("Starting connection to WebSocket Server");
-    this.connection = new WebSocket("ws://localhost:10005");
+    this.connection = new WebSocket("ws://localhost:8000");
     this.connection.onopen = function () {
       console.log("Successfully connected to the echo websocket server...");
     };
