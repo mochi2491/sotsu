@@ -118,13 +118,10 @@ export default {
     return {
       minute: 0,
       second: 0,
-<<<<<<< Updated upstream
       start: 0,
       now: 0,
       errorState: "",
-=======
       overlay: false,
-      processTime: "",
       currentSec: 0,
       startErrorTime: 0,
       currentErrorTime: 0,
@@ -132,7 +129,6 @@ export default {
       sabotageScore: 0,
       writeAverage: 0,
       colorName: "white",
->>>>>>> Stashed changes
       chartOptions: {
         chart: {
           id: "vuechart-example",
@@ -186,34 +182,6 @@ export default {
       }
     },
     currentTime: function (val) {
-<<<<<<< Updated upstream
-      let time = val.split(":");
-      this.now =
-        parseInt(time[0]) * 3600 + parseInt(time[1]) * 60 + parseInt(time[2]);
-      let amount = parseInt(this.changeAmount);
-      if (amount >= 0) {
-        this.series[0].data.push(amount);
-        this.series[0].data.shift();
-        this.updaeSeriesLine();
-      } else if (amount == -1) {
-        console.log("amount=1");
-      } else {
-        console.log("unexpected number")
-      }
-    },
-  },
-  methods: {
-    updaeSeriesLine() {
-      this.$refs.realtimeChart.updateSeries(
-        [
-          {
-            data: this.series[0].data,
-          },
-        ],
-        false,
-        true
-      );
-=======
       var time = val.split(":");
       this.currentSec =
         parseInt(time[0]) * 3600 + parseInt(time[1]) * 60 + parseInt(time[2]);
@@ -297,10 +265,21 @@ export default {
           waitNum
       );
       //this.$refs.realtimeChart.updataSeries(this.series[0].data);
->>>>>>> Stashed changes
     },
   },
-  methods: {},
+  methods: {
+    updateSeriesLine() {
+      this.$refs.realtimeChart.updateSeries(
+        [
+          {
+            data: this.series[0].data,
+          },
+        ],
+        false,
+        true
+      );
+    },
+  },
 };
 </script>
 

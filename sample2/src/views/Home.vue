@@ -175,10 +175,6 @@ export default {
   },
   created: function () {
     let that = this;
-<<<<<<< Updated upstream
-    console.log("Starting connection to WebSocket Server");
-    this.connection = new WebSocket("ws://localhost:10005");
-=======
     let pingPongTimer = null;
 
     console.log("Starting connection to WebSocket Serv");
@@ -197,7 +193,6 @@ export default {
       }, 30000);
     };
 
->>>>>>> Stashed changes
     this.connection.onopen = function () {
       checkConnection();
       console.log("Successfully connected to the echo websocket server...");
@@ -282,7 +277,7 @@ export default {
         } else if (res3.result == "failure") {
           that.errDetail = res3.stderr;
         } else {
-          console.log(res3.stderr)
+          console.log(res3.stderr);
         }
         console.log(res3.result);
       }

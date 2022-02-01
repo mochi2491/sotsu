@@ -16,17 +16,6 @@
       </v-overlay>
     </div>
     <div>
-<<<<<<< Updated upstream
-      <sample
-        :nowString="studentData.nowString"
-        :changeAmount="studentData.changeAmount"
-        :startTime="studentData.startTime"
-        :errorInfo="studentData.errorInfo"
-        :waitState="studentData.waitState"
-      ></sample>
-      <ul>
-        <li v-for="student in studentList" :key="student.studentID">
-=======
       <v-row>
         <v-col cols="8" md="2" sm="4">
           目標時間
@@ -55,23 +44,18 @@
     <div>
       <ul id="progressList">
         <li v-for="student in result" :key="student.studentID">
->>>>>>> Stashed changes
           <sample
             :userID="student.studentID"
             :nowString="student.inputGraph.nowString"
             :changeAmount="student.inputGraph.changeAmount"
             :startTime="student.elapsedTime.startTime"
-            :currentTime="student.elapsedTime.currentTime"
+            :currentTime="student.elapsedTime.nowTime"
             :errorInfo="student.errorInfo"
             :waitState="student.waitState"
-<<<<<<< Updated upstream
-          ></sample>
-=======
             :targetTime="targetTime"
             :targetCodeLength="targetCodeLength"
           >
           </sample>
->>>>>>> Stashed changes
         </li>
       </ul>
     </div>
@@ -121,38 +105,6 @@ export default {
         console.log("aa");
       } else {
         let splitedMessage = this.receivedMessage.split(",,");
-<<<<<<< Updated upstream
-        if (splitedMessage[0] == 0) {
-          this.studentList[splitedMessage[1]] = {
-            isOnline: true,
-            studentID: splitedMessage[1],
-            inputGraph: {
-              nowString: splitedMessage[3],
-              changeAmount: splitedMessage[7],
-              codeLength: splitedMessage[4],
-            },
-            elapsedTime: {
-              startTime: splitedMessage[8],
-              currentTime: splitedMessage[2],
-            },
-            errorInfo: "",
-            errorString: splitedMessage[6],
-            waitState: splitedMessage[5],
-          };
-          if (splitedMessage[6] == "") {
-            this.studentList[splitedMessage[1]]["errorInfo"] = "";
-          } else if (splitedMessage[6] ==  "success") {
-            this.studentList[splitedMessage[1]]["errorInfo"] = "SUCCESS";
-          } else {
-            this.studentList[splitedMessage[1]]["errorInfo"] = "ERROR";
-          }
-
-          console.log(this.studentList);
-        } else if (splitedMessage[0] == 1) {
-          //quit
-          this.studentList[splitedMessage[1]]["isOnline"] = false;
-          console.log(splitedMessage[1] + "quited");
-=======
         if (splitedMessage[1] in this.studentList) {
           if (splitedMessage[0] == 0) {
             this.studentList[splitedMessage[1]] = {
@@ -227,20 +179,15 @@ export default {
             this.studentList[splitedMessage[1]]["isOnline"] = false;
             console.log(splitedMessage[1] + "quited");
           }
->>>>>>> Stashed changes
         }
         console.log(splitedMessage[1]);
       }
-      this.studentList = Object.assign({}, this.studentList);
     },
   },
   created: function () {
     let that = this;
     let pingPongTimer = null;
     console.log("Starting connection to WebSocket Server");
-<<<<<<< Updated upstream
-    this.connection = new WebSocket("ws://cpmserver.herokuapp.com/");
-=======
     this.connection = new ReconnectingWebSocket(
       "wss://cpmserver.herokuapp.com/:8000"
     );
@@ -256,14 +203,10 @@ export default {
       }, 30000);
     };
 
->>>>>>> Stashed changes
     this.connection.onopen = function () {
       console.log("Successfully connected to the echo websocket server...");
     };
     this.connection.onmessage = function (event) {
-<<<<<<< Updated upstream
-      console.log(event.data);
-=======
       //console.log(event.data);
       if (event.data == "pong") {
         if (pingPongTimer) {
@@ -271,7 +214,6 @@ export default {
         }
         return checkConnection();
       }
->>>>>>> Stashed changes
       that.receivedMessage = event.data;
     };
     this.connection.onclose = function () {
