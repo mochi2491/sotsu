@@ -23,6 +23,7 @@
         v-model="switch1"
         style="margin-top: 2px; height: 36px"
       ></v-switch>
+      <v-select :items="langList" filled v-model="selectedLang"></v-select>
     </div>
     <div style="height: 200px">
       <editor
@@ -35,9 +36,9 @@
 
     <div class="InputField">
       <v-row>
-        <v-col cols="6" md="6">
+        <v-col cols="8" md="3">
           <v-textarea
-            v-bind="InputText"
+            v-model="InputText"
             solo
             name="inputData"
             background-color="white"
@@ -45,12 +46,23 @@
         </v-col>
       </v-row>
     </div>
-    <div class="OutputField">{{ OutputText }}</div>
+    <div class="OutputField">
+      <v-row>
+        <v-col cols="10" md="6">
+          <v-textarea
+            :value="OutputText + errDetail"
+            readonly
+            outlined
+          ></v-textarea>
+        </v-col>
+      </v-row>
+    </div>
   </div>
 </template>
   
 <script>
 import Editor from "../components/Editor";
+import ReconnectingWebSocket from "reconnecting-websocket";
 export default {
   components: {
     Editor,
@@ -61,6 +73,40 @@ export default {
       content: "",
       InputText: "",
       OutputText: "",
+      langList: [
+        "bash",
+        "c",
+        "c#",
+        "c++",
+        "clojure",
+        "cobol",
+        "coffeescript",
+        "d",
+        "elixir",
+        "erlang",
+        "f#",
+        "go",
+        "haskell",
+        "java",
+        "javascript",
+        "kotlin",
+        "mysql",
+        "nadesiko",
+        "objective-c",
+        "perl",
+        "php",
+        "python2",
+        "python3",
+        "r",
+        "ruby",
+        "rust",
+        "scala",
+        "schema",
+        "swift",
+        "typescript",
+        "vb",
+      ],
+      selectedLang: "",
       switch1: false,
       clock: new Date(),
       errDetail: "",
@@ -90,6 +136,7 @@ export default {
     receivedMessage: function (val) {
       if (val == "this id is exist") {
         this.overlay = false;
+        setInterval(this.setString, 10000);
       }
     },
   },
@@ -128,13 +175,41 @@ export default {
   },
   created: function () {
     let that = this;
+<<<<<<< Updated upstream
     console.log("Starting connection to WebSocket Server");
     this.connection = new WebSocket("ws://localhost:10005");
+=======
+    let pingPongTimer = null;
+
+    console.log("Starting connection to WebSocket Serv");
+    this.connection = new ReconnectingWebSocket(
+      "wss://cpmserver.herokuapp.com/:8000"
+    );
+    const checkConnection = () => {
+      setTimeout(() => {
+        this.connection.send("ping");
+        pingPongTimer = setTimeout(() => {
+          console.log("再接続を試みます");
+          pingPongTimer = null;
+          this.connection.reconnect();
+          this.connection.send(this.roomName);
+        }, 1000);
+      }, 30000);
+    };
+
+>>>>>>> Stashed changes
     this.connection.onopen = function () {
+      checkConnection();
       console.log("Successfully connected to the echo websocket server...");
     };
     this.connection.onmessage = function (event) {
       console.log(event.data);
+      if (event.data == "pong") {
+        if (pingPongTimer) {
+          clearTimeout(pingPongTimer);
+        }
+        return checkConnection();
+      }
       that.receivedMessage = event.data;
     };
     this.connection.onclose = function () {
@@ -189,8 +264,8 @@ export default {
         const url = "http://api.paiza.io:80/runners/create";
         const data = {
           source_code: that.content,
-          language: "python3",
-          input: "",
+          language: that.selectedLang,
+          input: that.InputText,
           api_key: "guest",
         };
         const res = await postData(url, data);
@@ -217,7 +292,6 @@ export default {
     login: function () {
       if (this.roomName != "") {
         this.connection.send(this.roomName);
-        setInterval(this.setString, 10000);
       }
     },
     changeContent(val) {

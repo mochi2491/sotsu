@@ -1,6 +1,29 @@
 <template>
   <div class="d-flex justify">
-    <v-card class="graph" max-width="500" height="330" outlined>
+    {{ userID }}
+    {{ sabotageScore }}
+    <div class="codeDisplay">
+      <v-btn @click="overlay = !overlay"> Show Code </v-btn>
+      <v-overlay :value="overlay">
+        <v-container fluid>
+          <v-textarea
+            solo
+            auto-grow
+            readonly
+            :value="nowString"
+            :color="colorName"
+          ></v-textarea>
+          <v-btn @click="overlay = !overlay" text>x</v-btn>
+        </v-container>
+      </v-overlay>
+    </div>
+    <v-card
+      class="graph"
+      max-width="500"
+      height="330"
+      outlined
+      :color="colorName"
+    >
       <vue-apex-charts
         ref="realtimeChart"
         width="500"
@@ -11,7 +34,13 @@
       </vue-apex-charts>
     </v-card>
     <div>
-      <v-card class="workTime" width="100" height="110" outlined>
+      <v-card
+        class="workTime"
+        width="100"
+        height="110"
+        outlined
+        :color="colorName"
+      >
         <div align="center">
           <div align="center">作業時間</div>
           <div align="center">
@@ -24,6 +53,7 @@
         width="100"
         height="110"
         outlined
+        :color="colorName"
       >
         <v-row align="center">
           <v-col align="center">
@@ -46,6 +76,7 @@
         width="100"
         height="110"
         outlined
+        :color="colorName"
       >
         <v-row align="center">
           <v-col align="center">
@@ -70,6 +101,7 @@ export default {
     VueApexCharts,
   },
   props: {
+    userID: String,
     nowString: String,
     changeAmount: String,
     startTime: {
@@ -79,14 +111,28 @@ export default {
     currentTime: String,
     errorInfo: String,
     waitState: String,
+    targetTime: String,
+    targetCodeLength: String,
   },
   data() {
     return {
       minute: 0,
       second: 0,
+<<<<<<< Updated upstream
       start: 0,
       now: 0,
       errorState: "",
+=======
+      overlay: false,
+      processTime: "",
+      currentSec: 0,
+      startErrorTime: 0,
+      currentErrorTime: 0,
+      accumlatedErrorTime: 0,
+      sabotageScore: 0,
+      writeAverage: 0,
+      colorName: "white",
+>>>>>>> Stashed changes
       chartOptions: {
         chart: {
           id: "vuechart-example",
@@ -134,7 +180,13 @@ export default {
     },
   },
   watch: {
+    errorInfo: function (val) {
+      if (val == "ERROR") {
+        this.startErrorTime = this.currentSec;
+      }
+    },
     currentTime: function (val) {
+<<<<<<< Updated upstream
       let time = val.split(":");
       this.now =
         parseInt(time[0]) * 3600 + parseInt(time[1]) * 60 + parseInt(time[2]);
@@ -161,8 +213,94 @@ export default {
         false,
         true
       );
+=======
+      var time = val.split(":");
+      this.currentSec =
+        parseInt(time[0]) * 3600 + parseInt(time[1]) * 60 + parseInt(time[2]);
+      var sec = this.currentSec - this.startSec;
+
+      this.processTime = Math.floor(sec / 60) + ":" + (sec % 60);
+
+      const sum = (numbers, initialValue = 0) =>
+        numbers.reduce(
+          (accumulator, currentValue) => accumulator + currentValue,
+          initialValue
+        );
+      const average = (numbers) => sum(numbers) / numbers.length;
+
+      if (this.errorInfo == "ERROR") {
+        this.currentErrorTime = 0;
+        this.currentErrorTime =
+          this.accumlatedErrorTime + (this.currentSec - this.startErrorTime);
+      } else {
+        this.accumlatedErrorTime = this.currentErrorTime;
+      }
+
+      var errorScore;
+      if (this.currentErrorTime < 300) {
+        errorScore = this.currentErrorTime;
+      } else if (this.currentErrorTime >= 300 && this.currentErrorTime < 600) {
+        errorScore = 100 + this.currentErrorTime;
+      } else if (this.currentErrorTime >= 600) {
+        errorScore = 200 + this.currentErrorTime;
+      }
+
+      var lengthScore;
+      if (
+        parseInt(this.targetCodeLength) * 0.5 < this.nowString.length &&
+        this.nowString.length < parseInt(this.targetCodeLength) * 1.5
+      ) {
+        lengthScore = 1;
+      } else {
+        lengthScore = 1.1;
+      }
+
+      var timeScore;
+      if (parseInt(this.targetTime) > sec) {
+        timeScore = 1;
+      } else {
+        timeScore = 1.1;
+      }
+
+      var waitNum;
+      if (this.waitState == "WAIT") {
+        waitNum = 0;
+      } else if (this.waitState == "WORK") {
+        waitNum = 1;
+      }
+
+      if (this.changeAmount != -1) {
+        this.series[0].data.shift();
+        this.series[0].data.push(this.changeAmount);
+        var line = this.series[0].data;
+        this.series = [{ data: line }];
+        this.writeAverage = average(this.series[0].data);
+        this.sabotageScore =
+          (this.writeAverage - errorScore * 0.1) *
+          (lengthScore * timeScore) *
+          waitNum; //評価値
+        this.$parent.studentList[this.userID].sabotageScore =
+          this.sabotageScore;
+      }
+
+      this.series[0].data.splice();
+      console.log(
+        "(" +
+          this.writeAverage +
+          "-" +
+          errorScore * 0.1 +
+          ")*(" +
+          lengthScore +
+          "+" +
+          timeScore +
+          ")*" +
+          waitNum
+      );
+      //this.$refs.realtimeChart.updataSeries(this.series[0].data);
+>>>>>>> Stashed changes
     },
   },
+  methods: {},
 };
 </script>
 

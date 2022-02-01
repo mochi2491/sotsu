@@ -10,6 +10,8 @@
   "dependencies": {
     "apexcharts": "^3.31.0",
     "core-js": "^3.6.5",
+    "express": "^4.17.2",
+    "reconnecting-websocket": "^4.4.0",
     "vue": "^2.6.11",
     "vue-apexcharts": "^1.6.2",
     "vue-router": "^3.2.0",
